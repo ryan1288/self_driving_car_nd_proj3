@@ -1,58 +1,196 @@
-## Project: Build a Traffic Sign Recognition Program
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
-
-Overview
+# **Traffic Sign Recognition** 
 ---
-In this project, you will use what you've learned about deep neural networks and convolutional neural networks to classify traffic signs. You will train and validate a model so it can classify traffic sign images using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset). After the model is trained, you will then try out your model on images of German traffic signs that you find on the web.
 
-We have included an Ipython notebook that contains further instructions 
-and starter code. Be sure to download the [Ipython notebook](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb). 
+**Build a Traffic Sign Recognition Project**
 
-We also want you to create a detailed writeup of the project. Check out the [writeup template](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/writeup_template.md) for this project and use it as a starting point for creating your own writeup. The writeup can be either a markdown file or a pdf document.
-
-To meet specifications, the project will require submitting three files: 
-* the Ipython notebook with the code
-* the code exported as an html file
-* a writeup report either as a markdown or pdf file 
-
-Creating a Great Writeup
----
-A great writeup should include the [rubric points](https://review.udacity.com/#!/rubrics/481/view) as well as your description of how you addressed each point.  You should include a detailed description of the code used in each step (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
-
-All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
-
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup.
-
-The Project
----
 The goals / steps of this project are the following:
-* Load the data set
+* Load the data set (see below for links to the project data set)
 * Explore, summarize and visualize the data set
 * Design, train and test a model architecture
 * Use the model to make predictions on new images
 * Analyze the softmax probabilities of the new images
 * Summarize the results with a written report
 
-### Dependencies
-This lab requires:
 
-* [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit)
+[//]: # (Image References)
 
-The lab environment can be created with CarND Term1 Starter Kit. Click [here](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) for the details.
+[image1]: report_images/sign_12.png
+[image2]: report_images/training_hist.png
+[image3]: report_images/valid_hist.png
+[image4]: report_images/test_hist.png
+[image5]: report_images/signs.png
+[image6]: report_images/feature_map.png
 
-### Dataset and Repository
+---
+## Data Set Summary & Exploration
 
-1. Download the data set. The classroom has a link to the data set in the "Project Instructions" content. This is a pickled dataset in which we've already resized the images to 32x32. It contains a training, validation and test set.
-2. Clone the project, which contains the Ipython notebook and the writeup template.
-```sh
-git clone https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project
-cd CarND-Traffic-Sign-Classifier-Project
-jupyter notebook Traffic_Sign_Classifier.ipynb
-```
+### Basic Data Set Summary
 
-### Requirements for Submission
-Follow the instructions in the `Traffic_Sign_Classifier.ipynb` notebook and write the project report using the writeup template as a guide, `writeup_template.md`. Submit the project code and writeup document.
+Using the numpy library, I calculated:
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+* The size of training set is 34799
+* The size of the validation set is 4410
+* The size of test set is 12630
+* The shape of a traffic sign image is (32, 32, 3) - 32x32 image with 3 layers (RGB)
+* The number of unique classes/labels in the data set is 43
+
+### Exploratory Visualization
+First, a sample image is provided along with the label:
+Label: 12 - Priority Road
+![][image1]
+
+Then, histograms showing the tributions of the images are below:
+The distributions are similar despite the different data set sizes.
+![][image2]
+![][image3]
+![][image4]
+
+## Design and Test a Model Architecture
+
+### Data Preprocessing
+Testing with the basic normalization, the model was able to successfully reach validation rates of up to 95%, hence no further preprocessing was done.
+
+Normalizing was done to center the data about 0, streamlining the process and increasing the likelihood of a better model while optimizing.
+`
+X_train = X_train/128 - 1
+X_validation = X_validation/128 - 1
+X_test = X_test/128 - 1
+`
+The data of 8 bits was normalized to be between -1 to 1 instead of 0 to 255.
+
+### Model Architecture
+My final model consisted of the following 13 layers:
+
+| Layer         		|     Description	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| Input         		| 32x32x3 RGB image   							| 
+| Convolution 5x5     	| 1x1 stride, valid padding, outputs 28x28x6 	|
+| RELU					|												|
+| Max pooling	      	| 2x2 stride,  outputs 14x14x6 					|
+| Convolution 5x5     	| 1x1 stride, valid padding, outputs 10x10x16 	|
+| RELU					|												|
+| Max pooling	      	| 2x2 stride, outputs 5x5x16 					|
+| Flattening	        | Array of 400 (= 5x5x16) 						|
+| Fully connected		| Output of size 120							|
+| RELU					|												|
+| Dropout				|												|
+| Fully connected		| Output of size 84								|
+| RELU					|												|
+| Dropout				|												|
+| Fully connected		| Output of size 43								|
+
+ 
+### Training the Model
+Hyperparameters:
+* Epochs: 15
+* Learning rate: 0.0007
+* Batch size: 32
+* Training dropout rate: 40%
+
+A training pipeline was created to train the model:
+* Set up `tf.placeholder` input/output TensorFlow variables with one hot encoding
+* Set hyperparameters including learning rate, epochs, batch sizes, and dropout probability
+* Set `tf.truncated_normal()` mean and standard deviation used for variable initialization
+* Use softmax to set cross entropy
+* Calculate the loss
+* Use the Adam Optimizer to make weight and bias adjustments
+* Establish the overall training operation
+* Iterate through epochs and shuffled batches of training features and labels at a 40% dropout rate
+* In each epoch, the average accuracy is calculated through the validation set with 0% dropout rate
+
+### Results and Discussion
+My final model results were:
+* training set accuracy of 0.996
+* validation set accuracy of 0.963 
+* test set accuracy of 0.943
+
+LeNet was a great starting point for the classification of traffic signs because it yielded great success in identifying numbers, a similar problem. Traffic signs are arguably simpler than handwriting to identify, as traffic signs have a fixed shape despite different environments and shades. The final results indicate that LeNet already provided good results, but further adjustments made it even more accurate in determining the correct traffic sign.
+
+Starting with LeNet, it provided accuracies of ~90-91% accuracy, which was insufficiently accurate. Next, I added the dropout step to both fully connected layers and iterated through different batch sizes, epochs, learning rates, and dropout rates. 
+
+As batch sizes went down, training time and accuracy went up. As epochs increased, the accuracy also went up until it saturates 9evidence by the training accuracy reaching near 100%). learning rates' effect varied, but in general, if the testing data's accuracy does not saturate, it continues to improve the resultant accuracy. Dropout rate has dimishing returns if set too high, and 40% was found to be a good middleground.
+
+A dropout layer is useful because it the model's reliance on specific weights in each layer by completely turning them off, this forces the model to gradaully be more generalized, leading to lower overfitting and better results. A convolution layer drastically reduces the amount of time required to train the model due to the lessened number of parameters compared to a fully connected layer. Also, it helps minimize the effects of the traffic sign's position and orientation in the picture as the weights are shared on each layer.
+
+While the training set accuracy is greater than the validation set accuracy, the overfitting is not severe as the difference is only 3%.
+
+## Test a Model on New Images
+
+### Traffic Signs from the Web
+Traffic Sign Model Prediction: 13-15th cell of the Ipython notebook.
+
+Here are five German traffic signs that I found on the web:
+
+![][image5]
+
+These images may be difficult to classify (left to right) because:
+1. Includes two semicircles on top, which may mistlead the model into thinking that those are numbers.
+2. Has white strips in the background that match in color with the arrow.
+3. The bottom is intentionally cut off while reformatting the image, and the model may be used to full signs.
+4. A good baseline test with primarily the sign.
+4. Includes a different shape in the background (different sign) and also the road name sign on top.
+
+### Model's Predictions and Comparisons
+Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
+
+Here are the results of the prediction (left to right):
+
+| Image			        |     Prediction		| 
+|:---------------------:|:---------------------:| 
+| Yield					| Yield					| 
+| Turn Left Ahead		| Turn Left Ahead		|
+| Roundabout Mandatory	| Roundabout Mandatory	|
+| Go Straight or Right	| Go Straight or Right	|
+| Priority Road			| Priority Road			|
+
+The model was able to correctly guess all 5 traffic signs, which gives an accuracy of 100%. This compares favorably to the accuracy of the test sets. However, on a different model testing run, the model only guessed 3 of the 5 accurately, so the consistency can be improved by adjusting the architecture and hyperparameters when noticed.
+
+### Model Prediction Confidence using Softmax Propabilities
+Prediction Code Cell: 16th cell of the Ipython notebook.
+
+Below, the top 5 Softmax probabilities are shown as well as their labels:
+
+First image: the model is confident that this is a yield sign (probability of 1), and the image does contain a yield sign.
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.00         			| Yield Sign   									| 
+
+Second image: the model was fairly certain that it was a turn left ahead sign, but it was also consider the keep right option (potentially due to the arrows).
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 0.76         			| Turn Left Ahead   							| 
+| 0.22     				| Keep Right 									|
+| 0.01					| Go Straight or Go Right						|
+| <0.01	      			| Turn Right Ahead								|
+| <0.01				    | Ahead Only      								|
+
+Third image: the model was a somewhat sure it was a roundabout image, but the rotating arrows likely made it consider the other turning options.
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 0.62         			| Roundabout Mandatory   						| 
+| 0.12     				| Keep Right 									|
+| 0.12					| Turn Left Ahead								|
+| 0.10	      			| Turn Right Ahead					 			|
+| 0.02				    | Go Straight or Go Right      					|
+
+Fourth image: the model was certain that it is a go straight or go right sign, with other possibilities under 10e-7.
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.0         			| Go Straight or Go Right   					| 
+
+Fifth image: the model was certain that it is a priority road sign, with other possibilities under 10e-24.
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.0         			| Priority Road   								| 
+
+
+## Visualizing the Neural Network
+Visualizing the model after the second pooling and convolution layer, the images below show that the model differentiates the yield sign's corners, triangular shape, and edges. Some images are black, potentially screening out other possibilities.
+
+![][image6]
 
