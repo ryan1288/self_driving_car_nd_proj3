@@ -34,6 +34,8 @@ Using the numpy library [Code Block 2], I calculated:
 ### Exploratory Visualization
 First, a sample image is provided along with the label:
 
+[Code Block 3]
+
 Label: 12 - Priority Road
 
 ![][image1]
@@ -49,7 +51,7 @@ The distributions are similar despite the different data set sizes.
 ### Data Preprocessing
 Testing with the basic normalization, the model was able to successfully reach validation rates of up to 95%, hence no further preprocessing was done.
 
-Normalizing was done to center the data about 0, streamlining the process and increasing the likelihood of a better model while optimizing.
+Normalizing was done [Code Block 4] to center the data about 0, streamlining the process and increasing the likelihood of a better model while optimizing.
 
 `
 X_train = X_train/128 - 1
@@ -60,7 +62,7 @@ X_test = X_test/128 - 1
 The data of 8 bits was normalized to be between -1 to 1 instead of 0 to 255.
 
 ### Model Architecture
-My final model consisted of the following 13 layers:
+My final model [Code Block 5] consisted of the following 13 layers:
 
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
@@ -88,7 +90,7 @@ Hyperparameters:
 * Batch size: 32
 * Training dropout rate: 40%
 
-A training pipeline was created to train the model:
+A training pipeline [Code Blocks 6-9] was created to train the model:
 * Set up `tf.placeholder` input/output TensorFlow variables with one hot encoding
 * Set hyperparameters including learning rate, epochs, batch sizes, and dropout probability
 * Set `tf.truncated_normal()` mean and standard deviation used for variable initialization
@@ -100,7 +102,7 @@ A training pipeline was created to train the model:
 * In each epoch, the average accuracy is calculated through the validation set with 0% dropout rate
 
 ### Results and Discussion
-My final model results were:
+My final model results [Code Blocks 9-10] were:
 * training set accuracy of 0.996
 * validation set accuracy of 0.963 
 * test set accuracy of 0.943
@@ -118,7 +120,7 @@ While the training set accuracy is greater than the validation set accuracy, the
 ## Test a Model on New Images
 
 ### Traffic Signs from the Web
-Traffic Sign Model Prediction: 13-15th cell of the Ipython notebook.
+Traffic Sign Model Prediction [Code Block 13]
 
 Here are five German traffic signs that I found on the web:
 
@@ -132,7 +134,7 @@ These images may be difficult to classify (left to right) because:
 4. Includes a different shape in the background (different sign) and also the road name sign on top.
 
 ### Model's Predictions and Comparisons
-Here are the results of the prediction (left to right):
+Here are the results of the prediction [Code Block 14-16] (left to right):
 
 | Image			        |     Prediction		| 
 |:---------------------:|:---------------------:| 
@@ -145,7 +147,7 @@ Here are the results of the prediction (left to right):
 The model was able to correctly guess all 5 traffic signs, which gives an accuracy of 100%. This compares favorably to the accuracy of the test sets. However, on a different model testing run, the model only guessed 3 of the 5 accurately, so the consistency can be improved by adjusting the architecture and hyperparameters when noticed.
 
 ### Model Prediction Confidence using Softmax Propabilities
-Prediction Code Cell: 16th cell of the Ipython notebook.
+Prediction Code Cell [Code Block 16]
 
 Below, the top 5 Softmax probabilities are shown as well as their labels:
 
@@ -189,7 +191,7 @@ Fifth image: the model was certain that it is a priority road sign, with other p
 
 
 ## Visualizing the Neural Network
-Visualizing the model after the second pooling and convolution layer, the images below show that the model differentiates the yield sign's corners, triangular shape, and edges. Some images are black, potentially screening out other possibilities.
+Visualizing the model [Code Block 17] after the second pooling and convolution layer, the images below show that the model differentiates the yield sign's corners, triangular shape, and edges. Some images are black, potentially screening out other possibilities.
 
 ![][image6]
 
