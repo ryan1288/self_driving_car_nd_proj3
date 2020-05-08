@@ -23,7 +23,7 @@ The goals / steps of this project are the following:
 
 ### Basic Data Set Summary
 
-Using the numpy library, I calculated:
+Using the numpy library [Code Block 2], I calculated:
 
 * The size of training set is 34799
 * The size of the validation set is 4410
@@ -33,7 +33,9 @@ Using the numpy library, I calculated:
 
 ### Exploratory Visualization
 First, a sample image is provided along with the label:
+
 Label: 12 - Priority Road
+
 ![][image1]
 
 Then, histograms showing the tributions of the images are below:
@@ -48,11 +50,13 @@ The distributions are similar despite the different data set sizes.
 Testing with the basic normalization, the model was able to successfully reach validation rates of up to 95%, hence no further preprocessing was done.
 
 Normalizing was done to center the data about 0, streamlining the process and increasing the likelihood of a better model while optimizing.
+
 `
 X_train = X_train/128 - 1
 X_validation = X_validation/128 - 1
 X_test = X_test/128 - 1
 `
+
 The data of 8 bits was normalized to be between -1 to 1 instead of 0 to 255.
 
 ### Model Architecture
@@ -80,7 +84,7 @@ My final model consisted of the following 13 layers:
 ### Training the Model
 Hyperparameters:
 * Epochs: 15
-* Learning rate: 0.0007
+* Learning rate: 0.0005
 * Batch size: 32
 * Training dropout rate: 40%
 
@@ -123,13 +127,11 @@ Here are five German traffic signs that I found on the web:
 These images may be difficult to classify (left to right) because:
 1. Includes two semicircles on top, which may mistlead the model into thinking that those are numbers.
 2. Has white strips in the background that match in color with the arrow.
-3. The bottom is intentionally cut off while reformatting the image, and the model may be used to full signs.
+3. The bottom is intentionally cut off while reformatting the image, and the model may not be familiar with incomplete signs.
 4. A good baseline test with primarily the sign.
 4. Includes a different shape in the background (different sign) and also the road name sign on top.
 
 ### Model's Predictions and Comparisons
-Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
-
 Here are the results of the prediction (left to right):
 
 | Image			        |     Prediction		| 
