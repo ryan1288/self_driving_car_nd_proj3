@@ -111,7 +111,7 @@ LeNet was a great starting point for the classification of traffic signs because
 
 Starting with LeNet, it provided accuracies of ~90-91% accuracy, which was insufficiently accurate. Next, I added the dropout step to both fully connected layers and iterated through different batch sizes, epochs, learning rates, and dropout rates. 
 
-As batch sizes went down, training time and accuracy went up. As epochs increased, the accuracy also went up until it saturates, evidenced by the training accuracy reaching near 100%). learning rates' effect varied, but in general, if the testing data's accuracy does not saturate, it continues to improve the resultant accuracy. Dropout rate has dimishing returns if set too high, and 40% was found to be a good middleground.
+As batch sizes went down, training time and accuracy went up. As epochs increased, the accuracy also went up until it saturates, evidenced by the training accuracy reaching near 100%. learning rates' effect varied, but in general, if the testing data's accuracy does not saturate, it continues to improve the resultant accuracy. Dropout rate has dimishing returns if set too high, and 40% was found to be a good middleground.
 
 A dropout layer is useful because it the model's reliance on specific weights in each layer by completely turning them off, this forces the model to gradaully be more generalized, leading to lower overfitting and better results. A convolution layer drastically reduces the amount of time required to train the model due to the lessened number of parameters compared to a fully connected layer. Also, it helps minimize the effects of the traffic sign's position and orientation in the picture as the weights are shared on each layer.
 
